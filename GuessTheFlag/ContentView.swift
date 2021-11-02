@@ -5,6 +5,18 @@
 //  Created by Derek Velzy on 10/19/21.
 //
 
+// Custom Modifier
+struct FlagImage: View {
+    var image: String
+    
+    var body: some View {
+        Image(image)
+            .renderingMode(.original)
+            .clipShape(Capsule())
+            .shadow(radius: 5)
+    }
+}
+
 import SwiftUI
 
 struct ContentView: View {
@@ -47,10 +59,7 @@ struct ContentView: View {
                             //flag tapped
                             self.flagTapped(number)
                         }) {
-                            Image(self.countries[number])
-                                .renderingMode(.original)
-                                .clipShape(Capsule())
-                                .shadow(radius: 5)
+                            FlagImage(image: self.countries[number])
                         }
                     }
                 }
