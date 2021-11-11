@@ -5,7 +5,7 @@
 //  Created by Derek Velzy on 10/19/21.
 //
 
-// Custom Modifier
+// Custom View
 struct FlagImage: View {
     var image: String
     
@@ -28,6 +28,9 @@ struct ContentView: View {
     @State private var showingScore = false
     @State private var scoreTitle = ""
     @State private var score = 0
+    
+    @State private var spinAnimations = [0.0, 0.0, 0.0]
+    @State private var fadeAnimations = [1.0, 1.0, 1.0]
     
     var body: some View {
         ZStack {
@@ -58,8 +61,20 @@ struct ContentView: View {
                         Button(action: {
                             //flag tapped
                             self.flagTapped(number)
+                            withAnimation {
+                                spinAnimations[number] += 360
+                            }
                         }) {
                             FlagImage(image: self.countries[number])
+                                .rotation3DEffect(.degrees(spinAnimations[number]), axis: (x: 0, y: 1, z: 0))
+                                .opacity(fadeAnimations[number])
+                                .overlay(
+                                    Rectangle()
+                                        .clipShape(Capsule())
+                                        .shadow(radius: 5)
+                                        .foregroundColor(.black)
+                                        .opacity(fadeAnimations[number] != 1.0 ? 0.25 : 0.0)
+                                )
                         }
                     }
                 }
@@ -87,6 +102,12 @@ struct ContentView: View {
                     dismissButton:
                         .default(Text("Continue")) {
                             self.askQuestion()
+                            for i in 0..<fadeAnimations.count {
+                                withAnimation {
+                                    fadeAnimations[Int(i)] = 1.0
+                                }
+                            }
+                            print(fadeAnimations)
                         }
                 )
             } else if scoreTitle == "Wrong" {
@@ -96,6 +117,12 @@ struct ContentView: View {
                     dismissButton:
                         .default(Text("Continue")) {
                             self.askQuestion()
+                            for i in 0..<fadeAnimations.count {
+                                withAnimation {
+                                    fadeAnimations[Int(i)] = 1.0
+                                }
+                            }
+                            print(fadeAnimations)
                         }
                 )
             } else {
@@ -125,6 +152,14 @@ struct ContentView: View {
         } else {
             scoreTitle = "Wrong"
         }
+        
+        for i in 0..<fadeAnimations.count {
+            let fade = i == number ? 1.0 : 0.25
+            withAnimation {
+                fadeAnimations[i] = fade
+            }
+        }
+        print(fadeAnimations)
         
         showingScore = true
         guessedAnswer = number
